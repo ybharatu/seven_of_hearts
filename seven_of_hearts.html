@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seven of Hearts</title>
+    <link rel="stylesheet" href="seven_of_hearts.css">
+    <link rel="stylesheet" href="cardsJS/cards.css">
+</head>
+<body>
+    <div class="game-container">
+        <!-- <div class="card-display" id="cardDisplay"></div> -->
+        <div class="players"> 
+    		<div class="player" id="comp1">Comp1</div> 
+    		<div class="player" id="comp2">Comp2</div> 
+    	</div>
+    	<div class="upper_section"> 
+	        <img class='card' id="HeartDisplayUp" src="cardsJS/cards/BLUE_BACK.svg">
+	        <img class='card' id="SpadeDisplayUp" src="cardsJS/cards/BLUE_BACK.svg">
+	        <img class='card' id="DiamondDisplayUp" src="cardsJS/cards/BLUE_BACK.svg">
+	        <img class='card' id="ClubDisplayUp" src="cardsJS/cards/BLUE_BACK.svg">
+	    </div>
+    	<div class="seven_section"> 
+	        <img class='card' id="HeartDisplay" src="cardsJS/cards/BLUE_BACK.svg">
+	        <img class='card' id="SpadeDisplay" src="cardsJS/cards/BLUE_BACK.svg">
+	        <img class='card' id="DiamondDisplay" src="cardsJS/cards/BLUE_BACK.svg">
+	        <img class='card' id="ClubDisplay" src="cardsJS/cards/BLUE_BACK.svg">
+	    </div>
+	    <div class="lower_section"> 
+	        <img class='card' id="HeartDisplayDown" src="cardsJS/cards/BLUE_BACK.svg">
+	        <img class='card' id="SpadeDisplayDown" src="cardsJS/cards/BLUE_BACK.svg">
+	        <img class='card' id="DiamondDisplayDown" src="cardsJS/cards/BLUE_BACK.svg">
+	        <img class='card' id="ClubDisplayDown" src="cardsJS/cards/BLUE_BACK.svg">
+	    </div>
+	    <div class="players"> 
+    		<div class="player" id="player1" style ="background-color: #008000">Player</div> 
+    	</div>
+        <div class="controls">
+            <!-- <button id="higherBtn">Higher</button>
+            <button id="lowerBtn">Lower</button> -->
+            <button id="startBtn">Start</button>
+        </div>
+        <div class="score">Score: <span id="score">0</span></div>
+        <div class="cur_player">Current Player: <span id="cur_player">Player</span></div>
+    </div>
+    <script src="cardsJS/cards.js"></script>
+    <script src="seven_of_hearts.js"></script>
+</body>
+</html>
