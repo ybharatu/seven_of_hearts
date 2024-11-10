@@ -27,9 +27,33 @@ for (let i = 0; i < 3; i++ ){
 	cur_hand.push([])
 }
 console.log(cur_hand)
+const player_hand = document.getElementById('player_hand');
+console.log(player_hand)
+
 const player1 = document.getElementById('player1');
 const comp1 = document.getElementById('comp1');
 const comp2 = document.getElementById('comp2');
+
+const card1 = document.getElementById('c1');
+const card2 = document.getElementById('c2');
+const card3 = document.getElementById('c3');
+const card4 = document.getElementById('c4');
+const card5 = document.getElementById('c5');
+const card6 = document.getElementById('c6');
+const card7 = document.getElementById('c7');
+const card8 = document.getElementById('c8');
+const card9 = document.getElementById('c9');
+const card10 = document.getElementById('c10');
+const card11 = document.getElementById('c11');
+const card12 = document.getElementById('c12');
+const card13 = document.getElementById('c13');
+const card14 = document.getElementById('c14');
+const card15 = document.getElementById('c15');
+const card16 = document.getElementById('c16');
+const card17 = document.getElementById('c17');
+const card18 = document.getElementById('c18');
+const card19 = document.getElementById('c19');
+const all_cards = [card1, card2, card3, card4, card5, card6, card7, card8, card9, card10, card11, card12, card13, card14, card15, card16, card17, card18, card19]
 
 const HeartDisplay = document.getElementById('HeartDisplay');
 const ClubDisplay = document.getElementById('ClubDisplay');
@@ -110,6 +134,31 @@ function get_score(hand){
 	}
 	return sum
 }
+function sortCards(cards) {
+    const suitOrder = ['H', 'C', 'D', 'S']; // Clubs, Diamonds, Hearts, Spades
+    const rankOrder = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
+
+    cards.sort((a, b) => {
+        const suitA = a.slice(-1);
+        const suitB = b.slice(-1);
+        const rankA = a.slice(0, -1);
+        const rankB = b.slice(0, -1);
+
+        if (suitA !== suitB) {
+            return suitOrder.indexOf(suitA) - suitOrder.indexOf(suitB);
+        }
+
+        return rankOrder.indexOf(rankA) - rankOrder.indexOf(rankB);
+    });
+
+    return cards;
+}
+
+function display_hand(hand){
+	for (let i = 0; i < hand.length; i++){
+		all_cards[i].src = "cardsJS/cards/" + hand[i] + ".svg";
+	}
+}
 
 function init_cards(){
 	player = Math.floor(Math.random()*3)
@@ -123,11 +172,15 @@ function init_cards(){
 		//console.log(player)
 	}
 	for (let i = 0; i < 3; i++){
+		//cur_hand[i].sort()
+		cur_hand[i] = sortCards(cur_hand[i])
+
 		cur_num_cards[i] = cur_hand[i].length
 		cur_scores[i] = get_score(cur_hand[i])
 		if (i === 0){
 			console.log("Setting comp1")
 			player1.textContent = "Player: " + cur_num_cards[i] + " cards"
+			display_hand(cur_hand[i])
 			//comp1.innerHTML += cur_num_cards[i] + " cards"
 		}
 		if (i === 1){
@@ -143,18 +196,34 @@ function init_cards(){
 	console.log(cur_hand)
 	console.log(cur_num_cards)
 	console.log(cur_scores)
-	playerDisplay.textContent = cur_player;
+	
 }
 
-const sleep = ms => new Promise(r => setTimeout(r, ms));
+function sleep(ms) { return new Promise(resolve => setTimeout(resolve, ms)); }
 
-function play_init_seven() {
-	seven_index = cur_hand[cur_player].indexOf("7H")
+async function play_init_seven() {
+	for (let i = 0; i < 3; i ++){
+		seven_index = cur_hand[i].indexOf("7H")
+		if (seven_index >= 0){
+			cur_player = i
+			playerDisplay.textContent = cur_player;
+			console.log(i + " has the 7H")
+			break;
+		}
+	}
+	await sleep(2000)
+	
 	cur_hand[cur_player].splice(seven_index, 1);
 	HeartDisplay.src = "cardsJS/cards/" + "7H" + ".svg"
 	for (let i = 0; i < 3; i++){
 		cur_num_cards[i] = cur_hand[i].length
 		cur_scores[i] = get_score(cur_hand[i])
+		if (i === 0){
+			console.log("Setting comp1")
+			player1.textContent = "Player: " + cur_num_cards[i] + " cards"
+			display_hand(cur_hand[i])
+			//comp1.innerHTML += cur_num_cards[i] + " cards"
+		}
 		if (i === 1){
 			console.log("Setting comp1")
 			comp1.textContent = "Comp1: " + cur_num_cards[i] + " cards"
@@ -162,20 +231,22 @@ function play_init_seven() {
 		}
 		if (i === 2){
 			//comp2.innerHTML += cur_num_cards[i] + " cards"
-			comp1.textContent = "Comp2: " + cur_num_cards[i] + " cards"
+			comp2.textContent = "Comp2: " + cur_num_cards[i] + " cards"
 		}
 	}
 	console.log(cur_hand)
 	console.log(cur_num_cards)
 	console.log(cur_scores)
+	await sleep(5000)
 	cur_player = (cur_player + 1) % 3
+	playerDisplay.textContent = cur_player;
 }
 
 
-function startGame() {
+async function startGame() {
 	init_cards()
-	sleep(2000)
-	//play_init_seven()
+	await sleep(2000)
+	play_init_seven()
 }
 
 
