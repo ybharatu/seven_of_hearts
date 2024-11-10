@@ -33,6 +33,8 @@ console.log(player_hand)
 const player1 = document.getElementById('player1');
 const comp1 = document.getElementById('comp1');
 const comp2 = document.getElementById('comp2');
+const players = [player1, comp1, comp2]
+const player_names = ["Player", "Comp1", "Comp2"]
 
 const card1 = document.getElementById('c1');
 const card2 = document.getElementById('c2');
@@ -183,14 +185,8 @@ function init_cards(){
 			display_hand(cur_hand[i])
 			//comp1.innerHTML += cur_num_cards[i] + " cards"
 		}
-		if (i === 1){
-			console.log("Setting comp1")
-			comp1.textContent = "Comp1: " + cur_num_cards[i] + " cards"
-			//comp1.innerHTML += cur_num_cards[i] + " cards"
-		}
-		if (i === 2){
-			//comp2.innerHTML += cur_num_cards[i] + " cards"
-			comp2.textContent = "Comp2: " + cur_num_cards[i] + " cards"
+		else {
+			players[i].textContent = player_names[i] + ": " + cur_num_cards[i] + " cards"
 		}
 	}
 	console.log(cur_hand)
@@ -207,6 +203,7 @@ async function play_init_seven() {
 		if (seven_index >= 0){
 			cur_player = i
 			playerDisplay.textContent = cur_player;
+			players[cur_player].style.background = 'green'
 			console.log(i + " has the 7H")
 			break;
 		}
@@ -224,22 +221,18 @@ async function play_init_seven() {
 			display_hand(cur_hand[i])
 			//comp1.innerHTML += cur_num_cards[i] + " cards"
 		}
-		if (i === 1){
-			console.log("Setting comp1")
-			comp1.textContent = "Comp1: " + cur_num_cards[i] + " cards"
-			//comp1.innerHTML += cur_num_cards[i] + " cards"
-		}
-		if (i === 2){
-			//comp2.innerHTML += cur_num_cards[i] + " cards"
-			comp2.textContent = "Comp2: " + cur_num_cards[i] + " cards"
+		else {
+			players[i].textContent = player_names[i] + ": " + cur_num_cards[i] + " cards"
 		}
 	}
 	console.log(cur_hand)
 	console.log(cur_num_cards)
 	console.log(cur_scores)
-	await sleep(5000)
+	//await sleep(5000)
+	players[cur_player].style.background = '#d3d3d3'
 	cur_player = (cur_player + 1) % 3
 	playerDisplay.textContent = cur_player;
+	players[cur_player].style.background = 'green'
 }
 
 
