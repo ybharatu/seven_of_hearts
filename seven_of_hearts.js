@@ -1,6 +1,7 @@
 const cardValues = [2, 3, 4, 5, 6, 7, 8, 9, 10, 'J', 'Q', 'K', 'A'];
 const suitValues = ['H', 'S', 'C', 'D']
 const deck = [];
+const Suit = Object.freeze({ HEART: 0, DIAMOND: 2, CLUB: 1, SPADE: 3 });
 
 //Using cardsJS from https://richardschneider.github.io/cardsJS/
 
@@ -22,6 +23,10 @@ let reached_three = [0,0,0]
 let cur_win = []
 let cur_num_cards = [0,0,0]
 let cur_player = 0
+let game_over = 0
+let seven_played = [0,0,0,0]
+let upper = ['8', '8', '8', '8']
+let lower = ['6', '6', '6', '6']
 
 for (let i = 0; i < 3; i++ ){
 	cur_hand.push([])
@@ -180,7 +185,6 @@ function init_cards(){
 		cur_num_cards[i] = cur_hand[i].length
 		cur_scores[i] = get_score(cur_hand[i])
 		if (i === 0){
-			console.log("Setting comp1")
 			player1.textContent = "Player: " + cur_num_cards[i] + " cards"
 			display_hand(cur_hand[i])
 			//comp1.innerHTML += cur_num_cards[i] + " cards"
@@ -210,13 +214,13 @@ async function play_init_seven() {
 	}
 	await sleep(2000)
 	
+	seven_played[Suit.HEART] = 1
 	cur_hand[cur_player].splice(seven_index, 1);
 	HeartDisplay.src = "cardsJS/cards/" + "7H" + ".svg"
 	for (let i = 0; i < 3; i++){
 		cur_num_cards[i] = cur_hand[i].length
 		cur_scores[i] = get_score(cur_hand[i])
 		if (i === 0){
-			console.log("Setting comp1")
 			player1.textContent = "Player: " + cur_num_cards[i] + " cards"
 			display_hand(cur_hand[i])
 			//comp1.innerHTML += cur_num_cards[i] + " cards"
@@ -235,11 +239,67 @@ async function play_init_seven() {
 	players[cur_player].style.background = 'green'
 }
 
+function get_options(hand){
+	options = []
+	for(let i = 0; i < hand.length; i++){
+		if (hand[i][0] === '7'){
+			options.push(hand[i])
+		}
+		if (hand[i][hand.length - 1] === 'H' && seven_played[Suit.HEART] == 1){
+			if (hand[i][0] == upper[Suit.HEART] || hand[i][0] == lower[Suit.HEART]) {
+				options.push(hand[i])
+			}
+		}
+		if (hand[i][hand.length - 1] === 'C' && seven_played[Suit.CLUB] == 1){
+			if (hand[i][0] == upper[Suit.CLUB] || hand[i][0] == lower[Suit.CLUB]) {
+				options.push(hand[i])
+			}
+		}
+		if (hand[i][hand.length - 1] === 'D' && seven_played[Suit.DIAMOND] == 1){
+			if (hand[i][0] == upper[Suit.DIAMOND] || hand[i][0] == lower[Suit.DIAMOND]) {
+				options.push(hand[i])
+			}
+		}
+		if (hand[i][hand.length - 1] === 'S' && seven_played[Suit.SPADE] == 1){
+			if (hand[i][0] == upper[Suit.SPADE] || hand[i][0] == lower[Suit.SPADE]) {
+				options.push(hand[i])
+			}
+		}
+	}
+	return options
+}
+
+function random_comp_choice(options){
+	if (options.length == 0) {
+		return -1
+	}
+	return options[Math.floor(Math.random()*options.length)]
+}
+
+function main_game () {
+	while(game_over == 0){
+		options = get_options(cur_hand[cur_player])
+		console.log("Options: ")
+		console.log(cur_player)
+		console.log(cur_hand[cur_player])
+		console.log(options)
+		game_over = 1
+		// if (cur_player == 0) {
+		// 	options = get_options(cur_hand[cur_player])
+		// 	console.log(options)
+		// }
+	}
+}
+
+
+
 
 async function startGame() {
 	init_cards()
 	await sleep(2000)
 	play_init_seven()
+	await sleep(2000)
+	main_game()
 }
 
 
