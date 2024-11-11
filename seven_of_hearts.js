@@ -1,7 +1,7 @@
 const cardValues = [2, 3, 4, 5, 6, 7, 8, 9, 10, 'J', 'Q', 'K', 'A'];
 const suitValues = ['H', 'S', 'C', 'D']
 const deck = [];
-const Suit = Object.freeze({ HEART: 0, DIAMOND: 2, CLUB: 1, SPADE: 3 });
+const Suit = Object.freeze({ HEART: 0, DIAMOND: 2, CLUB: 3, SPADE: 1 });
 
 //Using cardsJS from https://richardschneider.github.io/cardsJS/
 
@@ -27,6 +27,7 @@ let game_over = 0
 let seven_played = [0,0,0,0]
 let upper = ['8', '8', '8', '8']
 let lower = ['6', '6', '6', '6']
+let options = []
 
 for (let i = 0; i < 3; i++ ){
 	cur_hand.push([])
@@ -161,9 +162,32 @@ function sortCards(cards) {
     return cards;
 }
 
+function process_click(c_card){
+	//console.log(c_card)
+	str = c_card.src
+	// Find the starting index of the part you want to extract const 
+	startIndex = str.indexOf('cards/') + 'cards/'.length; // Find the ending index of the part you want to extract const 
+	endIndex = str.indexOf('.svg'); // Extract the desired part of the string const 
+	extractedString = str.substring(startIndex, endIndex);
+	//console.log(extractedString)
+	if (cur_player == 0) {
+		if (options.indexOf(extractedString) >= 0){
+			console.log(extractedString + " is playable")
+		}
+		else{
+			console.log(extractedString + " NOT playable")
+		}
+	}
+}
+
 function display_hand(hand){
 	for (let i = 0; i < hand.length; i++){
 		all_cards[i].src = "cardsJS/cards/" + hand[i] + ".svg";
+		all_cards[i].addEventListener('click', function() { 
+			//console.log(`Card ${i + 1} clicked!`); 
+			//console.log('Card source:', this.src); 
+			process_click(this) 
+		});
 	}
 }
 
@@ -216,7 +240,12 @@ async function play_init_seven() {
 	
 	seven_played[Suit.HEART] = 1
 	cur_hand[cur_player].splice(seven_index, 1);
-	HeartDisplay.src = "cardsJS/cards/" + "7H" + ".svg"
+	// HeartDisplay.src = "cardsJS/cards/" + "7H" + ".svg"
+	let seven_img = HeartDisplay.firstElementChild;
+	seven_img.src = "cardsJS/cards/" + "7H" + ".svg"
+	seven_img.classList.add('card');
+	//HeartDisplay.appendChild(seven_img);
+
 	for (let i = 0; i < 3; i++){
 		cur_num_cards[i] = cur_hand[i].length
 		cur_scores[i] = get_score(cur_hand[i])
@@ -240,28 +269,31 @@ async function play_init_seven() {
 }
 
 function get_options(hand){
-	options = []
+	
 	for(let i = 0; i < hand.length; i++){
 		if (hand[i][0] === '7'){
 			options.push(hand[i])
 		}
-		if (hand[i][hand.length - 1] === 'H' && seven_played[Suit.HEART] == 1){
-			if (hand[i][0] == upper[Suit.HEART] || hand[i][0] == lower[Suit.HEART]) {
+		console.log("OPTIONS: " + hand[i][0] +hand[i].slice(-1))
+		suit = hand[i].slice(-1)
+		rank = hand[i][0] 
+		if (suit === 'H' && seven_played[Suit.HEART] == 1){
+			if (rank === upper[Suit.HEART] || rank === lower[Suit.HEART]) {
 				options.push(hand[i])
 			}
 		}
-		if (hand[i][hand.length - 1] === 'C' && seven_played[Suit.CLUB] == 1){
-			if (hand[i][0] == upper[Suit.CLUB] || hand[i][0] == lower[Suit.CLUB]) {
+		if (suit === 'C' && seven_played[Suit.CLUB] == 1){
+			if (rank === upper[Suit.CLUB] || rank === lower[Suit.CLUB]) {
 				options.push(hand[i])
 			}
 		}
-		if (hand[i][hand.length - 1] === 'D' && seven_played[Suit.DIAMOND] == 1){
-			if (hand[i][0] == upper[Suit.DIAMOND] || hand[i][0] == lower[Suit.DIAMOND]) {
+		if (suit === 'D' && seven_played[Suit.DIAMOND] == 1){
+			if (rank === upper[Suit.DIAMOND] || rank === lower[Suit.DIAMOND]) {
 				options.push(hand[i])
 			}
 		}
-		if (hand[i][hand.length - 1] === 'S' && seven_played[Suit.SPADE] == 1){
-			if (hand[i][0] == upper[Suit.SPADE] || hand[i][0] == lower[Suit.SPADE]) {
+		if (suit === 'S' && seven_played[Suit.SPADE] == 1){
+			if (rank === upper[Suit.SPADE] || rank === lower[Suit.SPADE]) {
 				options.push(hand[i])
 			}
 		}
@@ -276,13 +308,28 @@ function random_comp_choice(options){
 	return options[Math.floor(Math.random()*options.length)]
 }
 
-function main_game () {
+async function main_game () {
 	while(game_over == 0){
 		options = get_options(cur_hand[cur_player])
 		console.log("Options: ")
 		console.log(cur_player)
 		console.log(cur_hand[cur_player])
 		console.log(options)
+		if (options.length == 0) {
+			players[cur_player].textContent = "SKIP"
+			players[cur_player].style.background = 'red'
+			await sleep (2000)
+			players[cur_player].textContent = player_names[cur_player] + ": " + cur_num_cards[cur_player] + " cards"
+			players[cur_player].style.background = '#d3d3d3'
+			cur_player = (cur_player + 1) % 3
+			playerDisplay.textContent = cur_player;
+			players[cur_player].style.background = 'green'
+			continue
+		}
+		if (cur_player != 0){
+			console.log("Computer Selects: ")
+			console.log(random_comp_choice(options))
+		}
 		game_over = 1
 		// if (cur_player == 0) {
 		// 	options = get_options(cur_hand[cur_player])
