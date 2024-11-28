@@ -1,6 +1,10 @@
 Before pushing to website:
 - Calculate and keep track of scores
 - 3 cards sure/unsure
+- Make current player green
+- 3 king rule
 
 Want to do:
 - online functionality
+	- https://medium.com/@talham7391/3-lessons-i-learned-from-developing-a-multiplayer-card-game-874a7b3bec5a
+	- 
