@@ -5,6 +5,8 @@ body {
     height: 100vh;
     margin: 0;
     background-color: #f0f0f0;
+    overflow-y: auto; /* Enable vertical scrolling */
+    height: 100%;
 }
 
 .game-container {
@@ -29,7 +31,7 @@ body {
 
 .player { border: 1px solid #000; border-radius: 5px; padding: 10px; margin: 10px; display: inline-block; width: 100px; background-color: #d3d3d3; }
 
-.players { display: flex; justify-content: center; margin-bottom: 20px; }
+.players { display: flex; justify-content: center; margin-bottom: 20px;overflow-y: auto; /* Enable vertical scrolling */margin-top: 10px; /* Optional: Add some spacing from the top */ }
 
 .seven_section { display: flex; justify-content: center; margin-bottom: 20px; }
 .upper_section { display: flex; justify-content: center; margin-bottom: 20px; }
