@@ -22,12 +22,16 @@ let cur_hand = []
 let reached_three = [0,0,0]
 let cur_win = []
 let cur_num_cards = [0,0,0]
-let cur_player = 0
+let cur_player = -1
 let game_over = 0
 let seven_played = [0,0,0,0]
 let upper = ['8', '8', '8', '8']
 let lower = ['6', '6', '6', '6']
+let upper_deck = [[],[],[],[]]
+let lower_deck = [[],[],[],[]]
 let options = []
+let player_chose = 0
+let sel_card = ''
 
 for (let i = 0; i < 3; i++ ){
 	cur_hand.push([])
@@ -173,6 +177,8 @@ function process_click(c_card){
 	if (cur_player == 0) {
 		if (options.indexOf(extractedString) >= 0){
 			console.log(extractedString + " is playable")
+			sel_card = extractedString
+			player_chose  = 1
 		}
 		else{
 			console.log(extractedString + " NOT playable")
@@ -189,6 +195,16 @@ function display_hand(hand){
 			process_click(this) 
 		});
 	}
+	total_cards_len = all_cards.length
+	images = player_hand.getElementsByTagName('img');
+	imageArray = Array.from(images);
+	// for (let i = hand.length ; i < total_cards_len; i++){
+	// 	all_cards[i].style.visibility = 'hidden';
+	// }
+	for (let i = imageArray.length - 1; i >= hand.length; i--) { 
+		player_hand.removeChild(imageArray[i]); 
+	}
+
 }
 
 function init_cards(){
@@ -224,6 +240,49 @@ function init_cards(){
 }
 
 function sleep(ms) { return new Promise(resolve => setTimeout(resolve, ms)); }
+
+function update_next (curr_num, direction) {
+	if(curr_num == '1'){
+		curr_num = 10
+	}
+	if(curr_num == 'J'){
+		curr_num = 11
+	}
+	if(curr_num == 'Q'){
+		curr_num = 12
+	}
+	if(curr_num == 'K'){
+		curr_num = 13
+	}
+	if(curr_num == 'A'){
+		curr_num = 1
+	}
+	curr_num = parseInt(curr_num, 10);
+	if(direction){
+		new_num = curr_num + 1
+	}
+	else {
+		new_num = curr_num - 1
+	}
+	new_num = new_num.toString();
+	if(new_num == '11'){
+		new_num = 'J'
+	}
+	if(new_num == '12'){
+		new_num = 'Q'
+	}
+	if(new_num == '13'){
+		new_num = 'K'
+	}
+	if(new_num == '1'){
+		new_num = 'A'
+	}
+	if(new_num == '10'){
+		new_num = '1'
+	}
+
+	return new_num
+}
 
 async function play_init_seven() {
 	for (let i = 0; i < 3; i ++){
@@ -274,9 +333,11 @@ function get_options(hand){
 		if (hand[i][0] === '7'){
 			options.push(hand[i])
 		}
-		console.log("OPTIONS: " + hand[i][0] +hand[i].slice(-1))
+		// console.log("OPTIONS: " + hand[i][0] +hand[i].slice(-1))
 		suit = hand[i].slice(-1)
-		rank = hand[i][0] 
+		rank = hand[i][0][0] 
+		//console.log(rank + suit)
+		console.log(upper[Suit.HEART])
 		if (suit === 'H' && seven_played[Suit.HEART] == 1){
 			if (rank === upper[Suit.HEART] || rank === lower[Suit.HEART]) {
 				options.push(hand[i])
@@ -307,12 +368,197 @@ function random_comp_choice(options){
 	}
 	return options[Math.floor(Math.random()*options.length)]
 }
+// Function to wait until a card is clicked 
+function waitForPlayerChoice() { 
+return new Promise((resolve) => { const interval = setInterval(() => { 
+	if (player_chose === 1) { clearInterval(interval); 
+		resolve(sel_card); } }, 100); // Check every 100 milliseconds 
+	}); 
+}
+
+function play_card(c_card) {
+
+	sel_rank = sel_card[0]
+	sel_suit = sel_card.slice(-1)
+	// Playing a 7
+	if (sel_rank === '7'){
+		if (sel_suit === "S"){
+			seven_played[Suit.SPADE] = 1
+			let seven_img = SpadeDisplay.firstElementChild;
+			seven_img.src = "cardsJS/cards/" + sel_card + ".svg"
+			seven_img.classList.add('card');
+		}
+		if (sel_suit === "D"){
+			seven_played[Suit.DIAMOND] = 1
+			let seven_img = DiamondDisplay.firstElementChild;
+			seven_img.src = "cardsJS/cards/" + sel_card + ".svg"
+			seven_img.classList.add('card');
+		}
+		if (sel_suit === "C"){
+			seven_played[Suit.CLUB] = 1
+			let seven_img = ClubDisplay.firstElementChild;
+			seven_img.src = "cardsJS/cards/" + sel_card + ".svg"
+			seven_img.classList.add('card');
+		}
+	} 
+	else {
+		if (sel_suit === "H"){
+			if (sel_rank == upper[Suit.HEART]){
+				if(upper[Suit.HEART] === "8"){
+					let new_img = HeartDisplayUp.firstElementChild;
+					new_img.src = "cardsJS/cards/" + sel_card + ".svg"
+					new_img.classList.add('card');
+				}
+				else{
+					let new_img = document.createElement('img');
+					new_img.src = "cardsJS/cards/" + sel_card + ".svg"
+					new_img.classList.add('card');
+					HeartDisplayUp.insertBefore(new_img, HeartDisplayUp.firstElementChild)
+				}
+				let num = upper[Suit.HEART]
+				upper[Suit.HEART] = update_next(num, 1)
+			} else {
+				if(lower[Suit.HEART] === "6"){
+					let new_img = HeartDisplayDown.firstElementChild;
+					new_img.src = "cardsJS/cards/" + sel_card + ".svg"
+					new_img.classList.add('card');
+				}
+				else{
+					let new_img = document.createElement('img');
+					new_img.src = "cardsJS/cards/" + sel_card + ".svg"
+					new_img.classList.add('card');
+					HeartDisplayDown.appendChild(new_img)
+				}
+				let num = lower[Suit.HEART]
+				lower[Suit.HEART] = update_next(num, 0)
+			}
+		}
+		if (sel_suit === "S"){
+			if (sel_rank == upper[Suit.SPADE]){
+				if(upper[Suit.SPADE] === "8"){
+					let new_img = SpadeDisplayUp.firstElementChild;
+					new_img.src = "cardsJS/cards/" + sel_card + ".svg"
+					new_img.classList.add('card');
+				}
+				else{
+					let new_img = document.createElement('img');
+					new_img.src = "cardsJS/cards/" + sel_card + ".svg"
+					new_img.classList.add('card');
+					SpadeDisplayUp.insertBefore(new_img, SpadeDisplayUp.firstElementChild)
+				}
+				let num = upper[Suit.SPADE]
+				upper[Suit.SPADE] = update_next(num, 1)
+			} else {
+				if(lower[Suit.SPADE] === "6"){
+					let new_img = SpadeDisplayDown.firstElementChild;
+					new_img.src = "cardsJS/cards/" + sel_card + ".svg"
+					new_img.classList.add('card');
+				}
+				else{
+					let new_img = document.createElement('img');
+					new_img.src = "cardsJS/cards/" + sel_card + ".svg"
+					new_img.classList.add('card');
+					SpadeDisplayDown.appendChild(new_img)
+				}
+				let num = lower[Suit.SPADE]
+				lower[Suit.SPADE] = update_next(num, 0)
+			}
+		}
+		if (sel_suit === "D"){
+			if (sel_rank == upper[Suit.DIAMOND]){
+				if(upper[Suit.DIAMOND] === "8"){
+					let new_img = DiamondDisplayUp.firstElementChild;
+					new_img.src = "cardsJS/cards/" + sel_card + ".svg"
+					new_img.classList.add('card');
+				}
+				else{
+					let new_img = document.createElement('img');
+					new_img.src = "cardsJS/cards/" + sel_card + ".svg"
+					new_img.classList.add('card');
+					DiamondDisplayUp.insertBefore(new_img, DiamondDisplayUp.firstElementChild)
+				}
+				let num = upper[Suit.DIAMOND]
+				upper[Suit.DIAMOND] = update_next(num, 1)
+			} else {
+				if(lower[Suit.DIAMOND] === "6"){
+					let new_img = DiamondDisplayDown.firstElementChild;
+					new_img.src = "cardsJS/cards/" + sel_card + ".svg"
+					new_img.classList.add('card');
+				}
+				else{
+					let new_img = document.createElement('img');
+					new_img.src = "cardsJS/cards/" + sel_card + ".svg"
+					new_img.classList.add('card');
+					DiamondDisplayDown.appendChild(new_img)
+				}
+				let num = lower[Suit.DIAMOND]
+				lower[Suit.DIAMOND] = update_next(num, 0)
+			}
+		}
+		if (sel_suit === "C"){
+			if (sel_rank == upper[Suit.CLUB]){
+				if(upper[Suit.CLUB] === "8"){
+					let new_img = ClubDisplayUp.firstElementChild;
+					new_img.src = "cardsJS/cards/" + sel_card + ".svg"
+					new_img.classList.add('card');
+				}
+				else{
+					let new_img = document.createElement('img');
+					new_img.src = "cardsJS/cards/" + sel_card + ".svg"
+					new_img.classList.add('card');
+					ClubDisplayUp.insertBefore(new_img, ClubDisplayUp.firstElementChild)
+				}
+				let num = upper[Suit.CLUB]
+				upper[Suit.CLUB] = update_next(num, 1)
+			} else {
+				if(lower[Suit.CLUB] === "6"){
+					let new_img = ClubDisplayDown.firstElementChild;
+					new_img.src = "cardsJS/cards/" + sel_card + ".svg"
+					new_img.classList.add('card');
+				}
+				else{
+					let new_img = document.createElement('img');
+					new_img.src = "cardsJS/cards/" + sel_card + ".svg"
+					new_img.classList.add('card');
+					ClubDisplayDown.appendChild(new_img)
+				}
+				let num = lower[Suit.CLUB]
+				lower[Suit.CLUB] = update_next(num, 0)
+			}
+		}
+	}
+	console.log("Before: " + cur_hand[cur_player])
+	sel_index = cur_hand[cur_player].indexOf(sel_card)
+	cur_hand[cur_player].splice(sel_index, 1);
+	// if(cur_player == 0){
+	// 	//all_cards[cur_player].splice(sel_index, 1)
+	// 	//console.log("All cards" + all_cards)
+	// }
+	console.log("After: " + cur_hand[cur_player])
+
+	for (let i = 0; i < 3; i++){
+		//cur_hand[i].sort()
+		cur_hand[i] = sortCards(cur_hand[i])
+
+		cur_num_cards[i] = cur_hand[i].length
+		cur_scores[i] = get_score(cur_hand[i])
+		if (i === 0){
+			player1.textContent = "Player: " + cur_num_cards[i] + " cards"
+			display_hand(cur_hand[i])
+			//comp1.innerHTML += cur_num_cards[i] + " cards"
+		}
+		else {
+			players[i].textContent = player_names[i] + ": " + cur_num_cards[i] + " cards"
+		}
+	}
+}
 
 async function main_game () {
-	while(game_over == 0){
+	test_cnt = 0
+	while(game_over == 0 || test_cnt == 5){
 		options = get_options(cur_hand[cur_player])
-		console.log("Options: ")
-		console.log(cur_player)
+		//console.log("Options: ")
+		console.log("Current Player: " + cur_player)
 		console.log(cur_hand[cur_player])
 		console.log(options)
 		if (options.length == 0) {
@@ -326,11 +572,35 @@ async function main_game () {
 			players[cur_player].style.background = 'green'
 			continue
 		}
+		players[cur_player].style.background = 'green'
 		if (cur_player != 0){
-			console.log("Computer Selects: ")
-			console.log(random_comp_choice(options))
+			sel_card = random_comp_choice(options)
+		} else {
+			new_card = await waitForPlayerChoice();
+			player_chose = 0
 		}
-		game_over = 1
+		options = []
+		console.log("Playing: " + sel_card)
+		play_card(sel_card)
+		players[cur_player].textContent = player_names[cur_player] + ": " + cur_num_cards[cur_player] + " cards"
+		players[cur_player].style.background = '#d3d3d3'
+		cur_player = (cur_player + 1) % 3
+		test_cnt += 1
+		await sleep(2000)
+		playerDisplay.textContent = cur_player;
+		players[cur_player].style.background = 'green'
+
+		// Checks if there is a winner and ends the game
+		for(let i = 0; i < 3; i++){
+			if(cur_num_cards[i] == 0){
+				console.log("Player " + i + " wins!")
+				game_over = 1
+				players[i].textContent = "Winner!"
+				players[i].style.background = 'gold'
+				break
+			}
+		}
+		//game_over = 1
 		// if (cur_player == 0) {
 		// 	options = get_options(cur_hand[cur_player])
 		// 	console.log(options)
@@ -345,7 +615,7 @@ async function startGame() {
 	init_cards()
 	await sleep(2000)
 	play_init_seven()
-	await sleep(2000)
+	await sleep(5000)
 	main_game()
 }
 
