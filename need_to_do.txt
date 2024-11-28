@@ -1,0 +1,6 @@
+Before pushing to website:
+- Calculate and keep track of scores
+- 3 cards sure/unsure
+
+Want to do:
+- online functionality
