@@ -83,6 +83,9 @@ const DiamondDisplayDown = document.getElementById('DiamondDisplayDown');
 const SpadeDisplayDown = document.getElementById('SpadeDisplayDown');
 
 const scoreDisplay = document.getElementById('score');
+const C1scoreDisplay = document.getElementById('comp1_score');
+const C2scoreDisplay = document.getElementById('comp2_score');
+const all_scores = [scoreDisplay, C1scoreDisplay, C2scoreDisplay]
 const playerDisplay = document.getElementById('cur_player');
 //const higherBtn = document.getElementById('higherBtn');
 //const lowerBtn = document.getElementById('lowerBtn');
@@ -308,13 +311,36 @@ async function play_init_seven() {
 	for (let i = 0; i < 3; i++){
 		cur_num_cards[i] = cur_hand[i].length
 		cur_scores[i] = get_score(cur_hand[i])
+		if(cur_num_cards[i] <= 3){
+			reached_three[i] = 1
+		}
 		if (i === 0){
-			player1.textContent = "Player: " + cur_num_cards[i] + " cards"
-			display_hand(cur_hand[i])
+			if(reached_three[i] == 1){
+				options = []
+				temp_options = get_options(cur_hand[cur_player])
+				temp_length = cur_hand[cur_player].length
+				player1.textContent = "Player: " + temp_options.length + " sure / " + (temp_length - temp_options.length) + " unsure"
+				options = []
+				display_hand(cur_hand[i])
+			}
+			else{
+				player1.textContent = "Player: " + cur_num_cards[i] + " cards"
+				display_hand(cur_hand[i])
+			}
+			
 			//comp1.innerHTML += cur_num_cards[i] + " cards"
 		}
 		else {
-			players[i].textContent = player_names[i] + ": " + cur_num_cards[i] + " cards"
+			if(reached_three[i] == 1){
+				options = []
+				temp_options = get_options(cur_hand[cur_player])
+				temp_length = cur_hand[cur_player].length
+				players[i].textContent = "Player: " + temp_options.length + " sure / " + (temp_length - temp_options.length) + " unsure"
+				options = []
+			}
+			else{
+				players[i].textContent = "Player: " + cur_num_cards[i] + " cards"
+			}
 		}
 	}
 	console.log(cur_hand)
@@ -541,15 +567,67 @@ function play_card(c_card) {
 		cur_hand[i] = sortCards(cur_hand[i])
 
 		cur_num_cards[i] = cur_hand[i].length
+		if(cur_num_cards[i] <= 3){
+			reached_three[i] = 1
+		}
 		cur_scores[i] = get_score(cur_hand[i])
+
 		if (i === 0){
-			player1.textContent = "Player: " + cur_num_cards[i] + " cards"
-			display_hand(cur_hand[i])
+			if(reached_three[i] == 1){
+				options = []
+				temp_options = get_options(cur_hand[cur_player])
+				temp_length = cur_hand[cur_player].length
+				player1.textContent = "Player: " + temp_options.length + " sure / " + (temp_length - temp_options.length) + " unsure"
+				options = []
+				display_hand(cur_hand[i])
+			}
+			else{
+				player1.textContent = "Player: " + cur_num_cards[i] + " cards"
+				display_hand(cur_hand[i])
+			}
 			//comp1.innerHTML += cur_num_cards[i] + " cards"
 		}
 		else {
-			players[i].textContent = player_names[i] + ": " + cur_num_cards[i] + " cards"
+			if(reached_three[i] == 1){
+				options = []
+				temp_options = get_options(cur_hand[cur_player])
+				temp_length = cur_hand[cur_player].length
+				players[i].textContent = player_names[i] + ": " + temp_options.length + " sure / " + (temp_length - temp_options.length) + " unsure"
+				options = []
+			}
+			else {
+				players[i].textContent = player_names[i] + ": " + cur_num_cards[i] + " cards"
+
+			}
 		}
+	}
+}
+
+function calculate_score(){
+	for(let i = 0; i < 3; i++){
+		i_score = 0
+		for(let j = 0; j < cur_hand[i].length; j++){
+			rank = cur_hand[i][j][0] 
+			console.log("Calculate score: " + rank)
+			if(rank == "1"){
+				rank = "10"
+			}
+			if(rank == "A"){
+				rank = "10"
+			}
+			if(rank == "J"){
+				rank = "11"
+			}
+			if(rank == "Q"){
+				rank = "12"
+			}
+			if(rank == "K"){
+				rank = "13"
+			}
+			num_rank = parseInt(rank, 10);
+			i_score += num_rank
+		}
+		all_scores[i].textContent = i_score
 	}
 }
 
@@ -575,14 +653,26 @@ async function main_game () {
 		players[cur_player].style.background = 'green'
 		if (cur_player != 0){
 			sel_card = random_comp_choice(options)
+			await sleep (2000)
 		} else {
 			new_card = await waitForPlayerChoice();
 			player_chose = 0
 		}
 		options = []
+		
 		console.log("Playing: " + sel_card)
 		play_card(sel_card)
-		players[cur_player].textContent = player_names[cur_player] + ": " + cur_num_cards[cur_player] + " cards"
+		if(reached_three[cur_player] == 1){
+			options = []
+			temp_options = get_options(cur_hand[cur_player])
+			temp_length = cur_hand[cur_player].length
+			players[cur_player].textContent = player_names[cur_player] + ": " + temp_options.length + " sure / " + (temp_length - temp_options.length) + " unsure"
+			options = []
+		}
+		else {
+			players[cur_player].textContent = player_names[cur_player] + ": " + cur_num_cards[cur_player] + " cards"
+		}
+		
 		players[cur_player].style.background = '#d3d3d3'
 		cur_player = (cur_player + 1) % 3
 		test_cnt += 1
@@ -606,6 +696,7 @@ async function main_game () {
 		// 	console.log(options)
 		// }
 	}
+	calculate_score()
 }
 
 

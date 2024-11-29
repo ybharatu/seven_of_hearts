@@ -3,6 +3,7 @@ Before pushing to website:
 - 3 cards sure/unsure
 - Make current player green
 - 3 king rule
+- make start button dissapear after the game starts
 
 Want to do:
 - online functionality
