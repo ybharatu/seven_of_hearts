@@ -29,7 +29,7 @@ let upper = ['8', '8', '8', '8']
 let lower = ['6', '6', '6', '6']
 let upper_deck = [[],[],[],[]]
 let lower_deck = [[],[],[],[]]
-let options = []
+//let options = []
 let player_chose = 0
 let sel_card = ''
 
@@ -354,7 +354,7 @@ async function play_init_seven() {
 }
 
 function get_options(hand){
-	
+	options = []
 	for(let i = 0; i < hand.length; i++){
 		if (hand[i][0] === '7'){
 			options.push(hand[i])
