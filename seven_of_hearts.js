@@ -317,9 +317,9 @@ async function play_init_seven() {
 		if (i === 0){
 			if(reached_three[i] == 1){
 				options = []
-				temp_options = get_options(cur_hand[cur_player])
+				temp_options = get_options(cur_hand[i])
 				temp_length = cur_hand[cur_player].length
-				player1.textContent = "Player: " + temp_options.length + " sure / " + (temp_length - temp_options.length) + " unsure"
+				player1.textContent = "Player: " + temp_options.length + " sure / " + (cur_num_cards[i] - temp_options.length) + " unsure"
 				options = []
 				display_hand(cur_hand[i])
 			}
@@ -333,9 +333,9 @@ async function play_init_seven() {
 		else {
 			if(reached_three[i] == 1){
 				options = []
-				temp_options = get_options(cur_hand[cur_player])
+				temp_options = get_options(cur_hand[i])
 				temp_length = cur_hand[cur_player].length
-				players[i].textContent = "Player: " + temp_options.length + " sure / " + (temp_length - temp_options.length) + " unsure"
+				players[i].textContent = "Player: " + temp_options.length + " sure / " + (cur_num_cards[i] - temp_options.length) + " unsure"
 				options = []
 			}
 			else{
@@ -575,9 +575,9 @@ function play_card(c_card) {
 		if (i === 0){
 			if(reached_three[i] == 1){
 				options = []
-				temp_options = get_options(cur_hand[cur_player])
+				temp_options = get_options(cur_hand[i])
 				temp_length = cur_hand[cur_player].length
-				player1.textContent = "Player: " + temp_options.length + " sure / " + (temp_length - temp_options.length) + " unsure"
+				player1.textContent = "Player: " + temp_options.length + " sure / " + (cur_num_cards[i] - temp_options.length) + " unsure"
 				options = []
 				display_hand(cur_hand[i])
 			}
@@ -590,9 +590,9 @@ function play_card(c_card) {
 		else {
 			if(reached_three[i] == 1){
 				options = []
-				temp_options = get_options(cur_hand[cur_player])
+				temp_options = get_options(cur_hand[i])
 				temp_length = cur_hand[cur_player].length
-				players[i].textContent = player_names[i] + ": " + temp_options.length + " sure / " + (temp_length - temp_options.length) + " unsure"
+				players[i].textContent = player_names[i] + ": " + temp_options.length + " sure / " + (cur_num_cards[i] - temp_options.length) + " unsure"
 				options = []
 			}
 			else {
@@ -666,7 +666,7 @@ async function main_game () {
 			options = []
 			temp_options = get_options(cur_hand[cur_player])
 			temp_length = cur_hand[cur_player].length
-			players[cur_player].textContent = player_names[cur_player] + ": " + temp_options.length + " sure / " + (temp_length - temp_options.length) + " unsure"
+			players[cur_player].textContent = player_names[cur_player] + ": " + temp_options.length + " sure / " + (cur_num_cards[cur_player] - temp_options.length) + " unsure"
 			options = []
 		}
 		else {
@@ -676,7 +676,7 @@ async function main_game () {
 		players[cur_player].style.background = '#d3d3d3'
 		cur_player = (cur_player + 1) % 3
 		test_cnt += 1
-		await sleep(2000)
+		await sleep(500)
 		playerDisplay.textContent = cur_player;
 		players[cur_player].style.background = 'green'
 
