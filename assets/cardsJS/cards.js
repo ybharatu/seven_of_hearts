@@ -299,6 +299,7 @@ var cardsScript = document.currentScript;
 
         // Call cards.play, when a card is clicked in an active hand.
         $(".hand").on("click", "img.card", function () {
+            console.log("CLICKED")
             module.play($(this));
         });
     });
