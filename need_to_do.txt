@@ -1,9 +1,9 @@
 Before pushing to website:
 - Calculate and keep track of scores
-- 3 cards sure/unsure
-- Make current player green
-- 3 king rule
-- make start button dissapear after the game starts
+- 3 cards sure/unsure DONE
+- Make current player green DONE
+- 3 king rule DONE
+- make start button dissapear after the game starts Done
 
 Want to do:
 - online functionality

@@ -1,6 +1,6 @@
 const cardValues = [2, 3, 4, 5, 6, 7, 8, 9, 10, 'J', 'Q', 'K', 'A'];
 const suitValues = ['H', 'S', 'C', 'D']
-const deck = [];
+let deck = [];
 const Suit = Object.freeze({ HEART: 0, DIAMOND: 2, CLUB: 3, SPADE: 1 });
 
 //Using cardsJS from https://richardschneider.github.io/cardsJS/
@@ -81,6 +81,7 @@ const HeartDisplayDown = document.getElementById('HeartDisplayDown');
 const ClubDisplayDown = document.getElementById('ClubDisplayDown');
 const DiamondDisplayDown = document.getElementById('DiamondDisplayDown');
 const SpadeDisplayDown = document.getElementById('SpadeDisplayDown');
+const allDisplays = [HeartDisplay, ClubDisplay, DiamondDisplay, SpadeDisplay, HeartDisplayUp, ClubDisplayUp, DiamondDisplayUp, SpadeDisplayUp, HeartDisplayDown, ClubDisplayDown, DiamondDisplayDown, SpadeDisplayDown]
 
 const scoreDisplay = document.getElementById('score');
 const C1scoreDisplay = document.getElementById('comp1_score');
@@ -95,6 +96,7 @@ const playerDisplay = document.getElementById('cur_player');
 // higherBtn.addEventListener('click', () => guess('higher'));
 // lowerBtn.addEventListener('click', () => guess('lower'));
 startBtn.addEventListener('click', () => startGame());
+resetBtn.addEventListener('click', () => resetGame());
 
 function guess(direction) {
     const nextCard = deck.pop();
@@ -733,11 +735,59 @@ async function main_game () {
 
 
 async function startGame() {
+	startBtn.style.visibility = 'hidden'
+	resetBtn.style.visibility = 'visible'
 	init_cards()
 	await sleep(2000)
 	play_init_seven()
 	await sleep(5000)
 	main_game()
+}
+
+async function resetGame() {
+	score = 0;
+	cur_scores = [0, 0, 0]
+	cur_hand = []
+	reached_three = [0,0,0]
+	cur_win = []
+	cur_num_cards = [0,0,0]
+	cur_player = -1
+	game_over = 0
+	seven_played = [0,0,0,0]
+	upper = ['8', '8', '8', '8']
+	lower = ['6', '6', '6', '6']
+	upper_deck = [[],[],[],[]]
+	lower_deck = [[],[],[],[]]
+	//let options = []
+	player_chose = 0
+	sel_card = ''
+	resetBtn.style.visibility = 'hidden'
+	startBtn.style.visibility = 'visible'
+	deck = []
+		// Create a deck of cards
+	for (let i = 0; i < 4; i++) {
+	    cardValues.forEach(value => deck.push(value + suitValues[i]));
+	}
+	console.log(deck)
+	deck.sort(() => Math.random() - 0.5); // Shuffle the deck
+	console.log(deck)
+	cur_hand = []
+	for (let i = 0; i < 3; i++ ){
+		cur_hand.push([])
+	}
+	// Clear out display
+	for(let i = 0; i < allDisplays.length; i++){
+		images = allDisplays[i].getElementsByTagName('img');
+		// Loop through all the images and remove them 
+		while (images.length > 0) { 
+			allDisplays[i].removeChild(images[0]); 
+		}
+		let new_img = document.createElement('img');
+		new_img.src = "cardsJS/cards/" + "BLUE_BACK" + ".svg"
+		new_img.classList.add('card');
+		allDisplays[i].appendChild(new_img)
+	}
+	//startGame()
 }
 
 
