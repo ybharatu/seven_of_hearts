@@ -8,4 +8,4 @@ Before pushing to website:
 Want to do:
 - online functionality
 	- https://medium.com/@talham7391/3-lessons-i-learned-from-developing-a-multiplayer-card-game-874a7b3bec5a
-	- 
+	- https://www.skysilk.com/blog/2018/online-javascript-game-tutorial/

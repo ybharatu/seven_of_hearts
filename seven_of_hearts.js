@@ -215,12 +215,42 @@ function init_cards(){
 	cur_player = player
 	//console.log(player)
 	//console.log("distribute cards")
-	dlen = deck.length
-	for( let i = 0; i < dlen; i++){
-		cur_hand[player].push(deck.pop())
-		player = (player + 1) % 3
-		//console.log(player)
+	three_kings = 1
+	while(three_kings){
+		dlen = deck.length
+		for( let i = 0; i < dlen; i++){
+			cur_hand[player].push(deck.pop())
+			player = (player + 1) % 3
+			//console.log(player)
+		}
+		for( let i = 0; i < 3; i++){
+			num_kings = 0
+			for(let j = 0; j < cur_hand[i].length; j++){
+				rank = cur_hand[i][j][0]
+				if(rank === "K"){
+					num_kings +=1
+				}
+			}
+			if(num_kings >= 3){
+				console.log("Player " + i + " has 3 kings")
+				three_kings = 1
+				// Create a deck of cards
+				for (let i = 0; i < 4; i++) {
+				    cardValues.forEach(value => deck.push(value + suitValues[i]));
+				}
+				deck.sort(() => Math.random() - 0.5); // Shuffle the deck
+				cur_hand = []
+				for (let i = 0; i < 3; i++ ){
+					cur_hand.push([])
+				}
+
+				break
+			} else{
+				three_kings = 0
+			}
+		}
 	}
+	
 	for (let i = 0; i < 3; i++){
 		//cur_hand[i].sort()
 		cur_hand[i] = sortCards(cur_hand[i])
