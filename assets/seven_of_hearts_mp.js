@@ -97,6 +97,7 @@ let upper = ['8', '8', '8', '8']
 let lower = ['6', '6', '6', '6']
 let upper_deck = [[],[],[],[]]
 let lower_deck = [[],[],[],[]]
+let client_player = -1
 //let options = []
 let player_chose = 0
 let sel_card = ''
@@ -248,7 +249,7 @@ function process_click(c_card){
 	endIndex = str.indexOf('.svg'); // Extract the desired part of the string const 
 	extractedString = str.substring(startIndex, endIndex);
 	//console.log(extractedString)
-	if (cur_player == 0) {
+	if (cur_player === client_player) {
 		if (options.indexOf(extractedString) >= 0){
 			console.log(extractedString + " is playable")
 			sel_card = extractedString
@@ -328,7 +329,7 @@ function init_cards(){
 
 		cur_num_cards[i] = cur_hand[i].length
 		cur_scores[i] = get_score(cur_hand[i])
-		if (i === 0){
+		if (i === client_player){
 			player1.textContent = "Player: " + cur_num_cards[i] + " cards"
 			display_hand(cur_hand[i])
 			//comp1.innerHTML += cur_num_cards[i] + " cards"
@@ -415,7 +416,7 @@ async function play_init_seven() {
 		if(cur_num_cards[i] <= 3){
 			reached_three[i] = 1
 		}
-		if (i === 0){
+		if (i === client_player){
 			if(reached_three[i] == 1){
 				options = []
 				temp_options = get_options(cur_hand[i])
@@ -673,7 +674,7 @@ function play_card(c_card) {
 		}
 		cur_scores[i] = get_score(cur_hand[i])
 
-		if (i === 0){
+		if (i === client_player){
 			if(reached_three[i] == 1){
 				options = []
 				temp_options = get_options(cur_hand[i])
@@ -752,7 +753,7 @@ async function main_game () {
 			continue
 		}
 		players[cur_player].style.background = 'green'
-		if (cur_player != 0){
+		if (cur_player != client_player){
 			sel_card = random_comp_choice(options)
 			await sleep (2000)
 		} else {
@@ -802,11 +803,29 @@ async function main_game () {
 
 function init_states(cur_state){
 	players = []
+	player_names = []
 	player_values = Object.values(cur_state.players)
+	comp_counter = 0
+	counter = 0
 	for(let i = 0; i < player_values.length; i++){
-		players.push(player_values[i])
-		console.log(cur_state)
+		//players.push(player_values[i].name)
+		player_names.push(player_values[i].name)
+		console.log(player_values[i].name)
+		if (playerName == player_names[i]){
+			players.push(player1)
+			client_player = counter
+		} else{
+			if (comp_counter == 0){
+				players.push(comp1)
+				comp_counter += 1
+				counter += 1
+			} else{
+				players.push(comp2)
+				counter += 1
+			}
+		}
 	}
+	console.log(player_names)
 	console.log(players)
 	console.log(cur_state)
 	console.log(Object.values(cur_state.players))
@@ -818,6 +837,7 @@ async function startGame() {
 	document.getElementById('startupScreen').style.display = 'none';
 	console.log("Setting gameContainer to Visible")
 	document.getElementById('gameContainer').style.visibility = 'visible';
+	document.getElementById('gameContainer').style.display = 'block';
 	startBtn.style.visibility = 'hidden'
 	resetBtn.style.visibility = 'visible'
 	console.log('Waiting for three players to join...'); 

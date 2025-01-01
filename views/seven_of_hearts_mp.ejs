@@ -13,11 +13,10 @@
 		<ul id="playersList"></ul> 
 		<button id="newStartButton" style="display: none;" onclick="startGame()">Start Game</button> 
 	</div> 
-	<div id="gameContainer" style="display: none;"> 
-		<!-- Game content will go here --> 
-	</div> 
+	<!-- <div id="gameContainer" style="display: none;"> 
+	</div>  -->
 	<script src="/socket.io/socket.io.js"></script>
-    <div class="game-container" style="visibility: hidden">
+    <div class="game-container" id="gameContainer" style="display: none;">
 		<script src="/socket.io/socket.io.js"></script>
         <!-- <div class="card-display" id="cardDisplay"></div> -->
         <div class="players"> 
