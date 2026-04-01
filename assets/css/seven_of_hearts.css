@@ -36,3 +36,5 @@ body {
 .seven_section { display: flex; justify-content: center; margin-bottom: 20px; }
 .upper_section { display: flex; justify-content: center; margin-bottom: 20px; }
 .lower_section { display: flex; justify-content: center; margin-bottom: 20px; }
+.no-click { pointer-events: none; }
+.not-playable { opacity: 1; pointer-events: none; }

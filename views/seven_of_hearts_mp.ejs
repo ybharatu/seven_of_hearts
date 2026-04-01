@@ -11,13 +11,12 @@
 	<div id="startupScreen"> 
 		<h2>Waiting for players to join...</h2> 
 		<ul id="playersList"></ul> 
-		<button id="newStartButton" style="display: none;" onclick="startGame()">Start Game</button> 
+		<button id="newStartButton" style="display: none;">Start Game</button>
 	</div> 
 	<!-- <div id="gameContainer" style="display: none;"> 
 	</div>  -->
 	<script src="/socket.io/socket.io.js"></script>
     <div class="game-container" id="gameContainer" style="display: none;">
-		<script src="/socket.io/socket.io.js"></script>
         <!-- <div class="card-display" id="cardDisplay"></div> -->
         <div class="players"> 
     		<div class="player" id="comp1">Comp1</div> 
@@ -107,6 +106,7 @@
         <div class="cur_player">Current Player: <span id="cur_player">Player</span></div>
         <div class="score">Connected Players: <span id="connected_players">0</span></div>
     </div>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="/cardsJS/cards.js"></script>
     <script src="/seven_of_hearts_mp.js"></script>
 
