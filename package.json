@@ -1,0 +1,24 @@
+{
+  "name": "seven_of_hearts",
+  "version": "1.0.0",
+  "description": "Seven of Hearts Card Game",
+  "main": "index.js",
+  "scripts": {
+    "test": "test_server"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ybharatu/seven_of_hearts.git"
+  },
+  "author": "Yash Bharatula",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ybharatu/seven_of_hearts/issues"
+  },
+  "homepage": "https://github.com/ybharatu/seven_of_hearts#readme",
+  "dependencies": {
+    "ejs": "^3.1.10",
+    "express": "^4.21.2",
+    "socket.io": "^4.8.1"
+  }
+}
