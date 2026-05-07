@@ -148,6 +148,10 @@ function process_click(img) {
 
 socket.on('updateGameState', (gameState) => {
 	cur_gamestate = gameState;
+	if (myIndex >= 0 && gameState.players && gameState.players[socket.id]) {
+		cur_hand[myIndex] = gameState.players[socket.id].hand;
+		display_hand(sortCards(gameState.players[socket.id].hand));
+	}
 });
 
 socket.on('threePlayersJoined', (gameState) => {
@@ -270,10 +274,62 @@ socket.on('skipTurn', (data) => {
 	}
 });
 
+let waitingStatus = null;
+let reconnectToken = null;
+
+socket.on('waitingForPlayer', (data) => {
+	console.log('Waiting for ' + data.playerName + ' to rejoin... (' + data.timeoutSeconds + 's)');
+	let statusDiv = document.getElementById('waitingStatus');
+	if (!statusDiv) {
+		statusDiv = document.createElement('div');
+		statusDiv.id = 'waitingStatus';
+		statusDiv.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,0.9);color:white;padding:20px 40px;border-radius:10px;font-size:24px;z-index:1000;';
+		document.body.appendChild(statusDiv);
+	}
+	let mySlot = globalToSlot(data.playerIndex);
+	if (mySlot === 0) {
+		statusDiv.textContent = 'Your connection is unstable. Please stay on this screen.';
+	} else {
+		statusDiv.textContent = 'Waiting for ' + data.playerName + ' to rejoin...';
+	}
+	waitingStatus = statusDiv;
+});
+
+socket.on('playerRejoined', (data) => {
+	console.log(data.playerName + ' rejoined!');
+	let statusDiv = document.getElementById('waitingStatus');
+	if (statusDiv) {
+		statusDiv.remove();
+		waitingStatus = null;
+	}
+	let rejoinedSlot = globalToSlot(data.playerIndex);
+	if (rejoinedSlot >= 0 && rejoinedSlot < 3) {
+		displaySlots[rejoinedSlot].textContent = player_names[data.playerIndex] + ' rejoined!';
+		displaySlots[rejoinedSlot].style.background = 'green';
+		setTimeout(() => {
+			displaySlots[rejoinedSlot].style.background = '#d3d3d3';
+		}, 2000);
+	}
+});
+
+socket.on('rejoinToken', (data) => {
+	reconnectToken = data.token;
+	socket.emit('rejoin', { token: data.token, name: myName });
+});
+
+setInterval(() => {
+	socket.emit('pong');
+}, 3000);
+
 socket.on('gameOver', (data) => {
 	canPlay = false;
 	options = [];
 	setHandClickable(false);
+	let statusDiv = document.getElementById('waitingStatus');
+	if (statusDiv) {
+		statusDiv.remove();
+		waitingStatus = null;
+	}
 
 	let scores = [0, 0, 0];
 	if (data.scores) {
@@ -441,6 +497,11 @@ async function resetGame() {
 	upper = ['8', '8', '8', '8'];
 	lower = ['6', '6', '6', '6'];
 	cur_hand = [];
+	let statusDiv = document.getElementById('waitingStatus');
+	if (statusDiv) {
+		statusDiv.remove();
+		waitingStatus = null;
+	}
 	myIndex = -1;
 
 	resetBtn.style.visibility = 'hidden';
@@ -477,3 +538,52 @@ async function resetGame() {
 
 	player_names = ['Player', 'Comp1', 'Comp2'];
 }
+
+socket.on('gameReset', () => {
+	options = [];
+	canPlay = false;
+	setHandClickable(false);
+	seven_played = [0, 0, 0, 0];
+	upper = ['8', '8', '8', '8'];
+	lower = ['6', '6', '6', '6'];
+	cur_hand = [];
+	let statusDiv = document.getElementById('waitingStatus');
+	if (statusDiv) {
+		statusDiv.remove();
+		waitingStatus = null;
+	}
+	myIndex = -1;
+
+	resetBtn.style.visibility = 'hidden';
+	startBtn.style.visibility = 'visible';
+	document.getElementById('gameContainer').style.display = 'none';
+	document.getElementById('startupScreen').style.display = 'block';
+
+	let statusEl = document.getElementById('startupStatus');
+	if (statusEl) statusEl.style.display = 'none';
+
+	for (let i = 0; i < allDisplays.length; i++) {
+		let images = allDisplays[i].getElementsByTagName('img');
+		while (images.length > 0) {
+			allDisplays[i].removeChild(images[0]);
+		}
+		let new_img = document.createElement('img');
+		new_img.src = 'cardsJS/cards/BLUE_BACK.svg';
+		new_img.classList.add('card');
+		allDisplays[i].appendChild(new_img);
+	}
+
+	displaySlots[0].textContent = 'Player';
+	displaySlots[1].textContent = 'Comp1';
+	displaySlots[2].textContent = 'Comp2';
+	for (let i = 0; i < 3; i++) {
+		displaySlots[i].style.background = '#d3d3d3';
+	}
+
+	for (let i = 0; i < all_cards.length; i++) {
+		all_cards[i].src = '';
+		all_cards[i].style.display = 'none';
+	}
+
+	player_names = ['Player', 'Comp1', 'Comp2'];
+});
